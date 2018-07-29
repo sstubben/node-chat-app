@@ -2,12 +2,12 @@
 var socket = io();
 // listen on connect event
 socket.on('connect', function() {
-  console.log('Connected to server')
+  console.log('New user connected to server')
 
-  socket.emit('createMessage', {
-    from: 'johndoe',
-    text: 'I created a new message'
-  })
+  // socket.emit('createMessage', {
+  //   from: 'johndoe',
+  //   text: 'I created a new message'
+  // })
 })
 
 socket.on('disconnect', function() {
