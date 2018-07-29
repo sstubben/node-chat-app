@@ -16,6 +16,9 @@ app.use(express.static('public'))
 io.on('connection', (socket) => {
   console.log('New user connected')
 
+  // socket.emit from Admin with text: "Welcome to the chat app"
+  // socket.broadcast.emit from Admin with text: "New user joined"
+
   // socket has a method emit that will be used both in client and server
   // emit is really similar to listeners (on), although instead of listening
   // to events, emit creates events.
@@ -30,20 +33,34 @@ io.on('connection', (socket) => {
   // })
 
   // socket.emit emits/sends a message to a single connection
-  // socket.emit('newMessage', {
-  //   from: 'johndoe',
-  //   text: 'Sending you a message!',
-  //   createdAt: 987654321
-  // })
+  socket.emit('newMessage', {
+    from: 'Admin',
+    text: 'Welcome to the chat app!',
+    createdAt: new Date().getTime()
+  })
+
+  socket.broadcast.emit('newMessage', {
+    from: 'Admin',
+    text: 'New user joined',
+    createdAt: new Date().getTime()
+  })
 
   socket.on('createMessage', (message) => {
     console.log('createMessage', message)
     // io.emit emits an event to every single connection
-    io.emit('newMessage', {
-      from: message.from,
-      text: message.text,
-      createdAt: new Date().getTime()
-    })
+    // io.emit('newMessage', {
+    //   from: message.from,
+    //   text: message.text,
+    //   createdAt: new Date().getTime()
+    // })
+
+    // broadcasting is the term for emitting an event to everybody,
+    // but one specific user
+    // socket.broadcast.emit('newMessage', {
+    //   from: message.from,
+    //   text: message.text,
+    //   createdAt: new Date().getTime()
+    // })
   })
 
   socket.on('disconnect', () => {
