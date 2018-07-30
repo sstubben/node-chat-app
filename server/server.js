@@ -3,6 +3,8 @@ const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io')
 
+const {generateMessage} = require('./utils/message')
+
 const port = process.env.PORT || 3000;
 var app = express();
 var server = http.createServer(app);
@@ -15,6 +17,11 @@ app.use(express.static('public'))
 // meaning a client connected to the server
 io.on('connection', (socket) => {
   console.log('New user connected')
+
+  // socket.emit emits/sends a message to a single connection
+  socket.emit('newMessage', generateMessage('Admin','Welcome to the chat app'))
+
+  socket.broadcast.emit('newMessage', generateMessage('Admin','New user joined'))
 
   // socket.emit from Admin with text: "Welcome to the chat app"
   // socket.broadcast.emit from Admin with text: "New user joined"
@@ -32,21 +39,11 @@ io.on('connection', (socket) => {
   //   console.log('Create email', newEmail)
   // })
 
-  // socket.emit emits/sends a message to a single connection
-  socket.emit('newMessage', {
-    from: 'Admin',
-    text: 'Welcome to the chat app!',
-    createdAt: new Date().getTime()
-  })
 
-  socket.broadcast.emit('newMessage', {
-    from: 'Admin',
-    text: 'New user joined',
-    createdAt: new Date().getTime()
-  })
 
   socket.on('createMessage', (message) => {
     console.log('createMessage', message)
+    io.emit('newMessage', generateMessage(message.from,message.text))
     // io.emit emits an event to every single connection
     // io.emit('newMessage', {
     //   from: message.from,
