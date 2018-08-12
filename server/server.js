@@ -23,27 +23,10 @@ io.on('connection', (socket) => {
 
   socket.broadcast.emit('newMessage', generateMessage('Admin','New user joined'))
 
-  // socket.emit from Admin with text: "Welcome to the chat app"
-  // socket.broadcast.emit from Admin with text: "New user joined"
-
-  // socket has a method emit that will be used both in client and server
-  // emit is really similar to listeners (on), although instead of listening
-  // to events, emit creates events.
-  // socket.emit('newEmail', {
-  //   from:'hello@doe.com',
-  //   text: 'This is a test',
-  //   createdAt: '12345'
-  // })
-  //
-  // socket.on('createEmail', (newEmail) => {
-  //   console.log('Create email', newEmail)
-  // })
-
-
-
-  socket.on('createMessage', (message) => {
+  socket.on('createMessage', (message, callback) => {
     console.log('createMessage', message)
     io.emit('newMessage', generateMessage(message.from,message.text))
+    callback('This is from the server')
     // io.emit emits an event to every single connection
     // io.emit('newMessage', {
     //   from: message.from,
@@ -63,6 +46,24 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('Disconnected from client')
   })
+
+  // socket.emit from Admin with text: "Welcome to the chat app"
+  // socket.broadcast.emit from Admin with text: "New user joined"
+
+  // socket has a method emit that will be used both in client and server
+  // emit is really similar to listeners (on), although instead of listening
+  // to events, emit creates events.
+  // socket.emit('newEmail', {
+  //   from:'hello@doe.com',
+  //   text: 'This is a test',
+  //   createdAt: '12345'
+  // })
+  //
+  // socket.on('createEmail', (newEmail) => {
+  //   console.log('Create email', newEmail)
+  // })
+
+
 
 })
 
