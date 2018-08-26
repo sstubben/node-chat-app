@@ -1,5 +1,21 @@
 //initiating the request from the client to the server and keep it open
 var socket = io();
+
+const scrollToBottom = () => {
+  // Selectors:
+  var messages = jQuery('#messages')
+  var newMessage = messages.children('li:last-child')
+  // Heights: 
+  var clientHeight = messages.prop('clientHeight')
+  var scrollTop = messages.prop('scrollTop')
+  var scrollHeight = messages.prop('scrollHeight')
+  var newMessageHeight = newMessage.innerHeight()
+  var lastMessageHeight = newMessage.prev().innerHeight()
+
+  if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+    messages.scrollTop(scrollHeight)    
+  }
+}
 // listen on connect event
 socket.on('connect', function() {
   console.log('New user connected to server')
@@ -22,12 +38,8 @@ socket.on('newMessage', function (message) {
     createdAt: moment(message.createdAt).format('h:mm a')
   })
   jQuery('#messages').append(html)
+  scrollToBottom()
 
-  // var formattedTime = moment(message.createdAt).format('h:mm a')
-  // var li = jQuery('<li></li>')
-  // li.text(`${message.from} ${formattedTime}: ${message.text}`)
-
-  // jQuery('#messages').append(li)
 })
 
 socket.on('newLocationMessage', function (message) {
@@ -38,23 +50,9 @@ socket.on('newLocationMessage', function (message) {
     createdAt: moment(message.createdAt).format('h:mm a')
   })
   jQuery('#messages').append(html)
-
-  // var formattedTime = moment(message.createdAt).format('h:mm a')
-  // var li = jQuery('<li></li>')
-  // var a = jQuery('<a target="_blank">My current location</a>')
-
-  // li.text(`${message.from} ${formattedTime}: `)
-  // a.attr('href', message.url)
-  // li.append(a)
-  // jQuery('#messages').append(li)
+  scrollToBottom()
 })
 
-// socket.emit('createMessage', {
-//   from: 'Frank',
-//   text: 'Hi',
-// }, function (data) { // this function will fire when the acknoledgement arrives at the client
-//   console.log('Got it', data);
-// })
 
 jQuery('#message-form').on('submit', function (e) {
   e.preventDefault()
